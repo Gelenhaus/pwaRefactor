@@ -7,8 +7,8 @@ const request = indexedDB.open('myRefactor', 1);
 request.onupgradeneeded = function (event) {
     // save a reference to the database 
     const db = event.target.result;
-    // create an object store (table) called `transactionStuff`, set it to have an auto incrementing primary key of sorts 
-    db.createObjectStore('myRefactor', { autoIncrement: true });
+    // create an object store (table) called `new_refactor`, set it to have an auto incrementing primary key of sorts 
+    db.createObjectStore('new_refactor', { autoIncrement: true });
 };
 
 // upon a successful 
@@ -18,8 +18,7 @@ request.onsuccess = function (event) {
 
     // check if app is online, if yes run uploadPizza() function to send all local db data to api
     if (navigator.onLine) {
-        // we haven't created this yet, but we will soon, so let's comment it out for now
-        // uploadPizza();
+        saveRecord();
     }
 };
 
@@ -31,10 +30,10 @@ request.onerror = function (event) {
 // This function will be executed if we attempt to submit a new transaction and there's no internet connection
 function saveRecord(record) {
     // open a new transaction with the database with read and write permissions 
-    const transaction = db.transaction(['transactionStuff'], 'readwrite');
+    const transaction = db.transaction(['new_refactor'], 'readwrite');
 
-    // access the object store for `transactionStuff`
-    const myRefactorObjectStore = transaction.objectStore('transactionStuff');
+    // access the object store for `new_refactor`
+    const myRefactorObjectStore = transaction.objectStore('new_refactor');
 
     // add record to your store with add method
     myRefactorObjectStore.add(record);
@@ -58,9 +57,9 @@ getAll.onsuccess = function () {
                     throw new Error(serverResponse);
                 }
                 // open one more transaction
-                const transaction = db.transaction(['transactionStuff'], 'readwrite');
-                // access the transactionStuff object store
-                const myRefactorObjectStore = transaction.objectStore('transactionStuff');
+                const transaction = db.transaction(['new_refactor'], 'readwrite');
+                // access the new_refactor object store
+                const myRefactorObjectStore = transaction.objectStore('new_refactor');
                 // clear all items in your store
                 myRefactorObjectStore.clear();
 
@@ -71,3 +70,5 @@ getAll.onsuccess = function () {
             });
     }
 };
+
+window.addEventListener('online', saveRecord)
